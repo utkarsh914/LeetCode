@@ -14,7 +14,7 @@ public:
 		while (i<size && days[i]<days[start]+30) i++;
 		int month_pass = cost[2] + mincostTickets(days, cost, i);
 
-		return min(day_pass, min(week_pass, month_pass));
+		return min({ day_pass, week_pass, month_pass });
 	}
 };
 
@@ -32,8 +32,8 @@ public:
 		for (int i=365; i>=0; i--) {
 			dp[i] = dp[i+1];
 			if (!days.count(i)) continue;
-			int day_pass	 = cost[0] + dp[min(365,i+1)];
-			int week_pass	= cost[1] + dp[min(365,i+7)];
+			int day_pass	 = cost[0] + dp[min(365,i+1 )];
+			int week_pass	 = cost[1] + dp[min(365,i+7 )];
 			int month_pass = cost[2] + dp[min(365,i+30)];
 			dp[i] = min({ day_pass, week_pass, month_pass });
 		}
@@ -41,6 +41,19 @@ public:
 		return dp[0];
 	}
 };
+
+
+
+int mincostTickets(vector<int>& days, vector<int>& costs) {
+  unordered_set<int> travel(begin(days), end(days));
+  int dp[366] = {};
+  for (int i = 1; i < 366; ++i) {
+	if (travel.find(i) == travel.end()) dp[i] = dp[i - 1];
+	else dp[i] = min({ dp[i-1] + costs[0], dp[max(0, i-7)] + costs[1], dp[max(0, i-30)] + costs[2]});
+  }
+  return dp[365];
+}
+
 
 
 //********* more space optimized *********

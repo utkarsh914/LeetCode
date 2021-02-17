@@ -3,7 +3,7 @@
 class Solution {
 	bool canShip(vector<int>& weights, int D, int capacity) {
 		int days = 1, curTotal = 0;
-		for (int w:weights) {
+		for (int w : weights) {
 			curTotal += w;
 			if (curTotal > capacity)
 				days++, curTotal = w;

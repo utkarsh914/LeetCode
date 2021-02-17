@@ -45,11 +45,11 @@ ListNode* Solution::mergeList(ListNode* h1, ListNode* h2) {
 	// if h1 val is lesser, then it should be proceeded by the merged of remaining part of h1, and full h2
 	// similarly if h2 val is lesser, then it should be proceeded by the merged of remaining part of h2, and full h1
 	if (h1->val < h2->val) {
-		head=h1;
+		head = h1;
 		head->next = mergeList(h2, h1->next);
 	}
 	else {
-		head=h2;
+		head = h2;
 		head->next = mergeList(h2->next, h1);
 	}
 	// return merged list

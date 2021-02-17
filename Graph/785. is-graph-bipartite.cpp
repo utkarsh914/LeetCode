@@ -59,3 +59,53 @@ bool isBipartite(vector<vector<int>>& graph) {
 				return false;
 	return true;
 }};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Solution {
+	vector<bool> vis, col;
+public:
+	bool isBipartite(vector<vector<int>>& graph) {
+		int size = graph.size();
+		vis.resize(size, false), col.resize(size, false);
+		
+		for (int i=0; i < size; i++) {
+			if (!vis[i] && check(graph, i)==false)
+				return false;
+		}
+		
+		return true;
+	}
+	
+	bool check(vector<vector<int>>& graph, int V) {
+		queue<int> q;
+		q.push(V);
+		col[V] = true, vis[V] = true;
+		
+		while (!q.empty()) {
+			int u = q.front(); q.pop();
+			for (auto& v : graph[u]) {
+				if (!vis[v]) {
+					vis[v] = true;
+					col[v] = !col[u];
+					q.push(v);
+				} // if visited already, color should be different
+				else if (col[v] == col[u])
+					return false;
+			}
+		}
+		
+		return true;
+	}
+};

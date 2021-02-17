@@ -67,7 +67,7 @@ vector<string> letterCasePermutation(string input) {
 		int size = q.size();
 		while (size--) {
 			string curr = q.front(); q.pop();
-			if (input[level-1]>='0' && input[level-1]<='9') {
+			if (isdigit(input[level-1])) {
 				q.push(curr);
 				continue;
 			}
@@ -85,31 +85,28 @@ vector<string> letterCasePermutation(string input) {
 
 
 // ********* RECURSION **********
-vector<string> result;
+class Solution {
+public:
+	vector<string> result;
 
-vector<string> letterCasePermutation(string s) {
-	solve(s, 0, "");
-	return result;
-}
+	vector<string> letterCasePermutation(string s) {
+		solve(s, 0, "");
+		return result;
+	}
 
-void solve(string& ip, int start, string op) {
-	if (start==ip.length()) {
-		result.push_back(op);
-		return;
+	void solve(string& ip, int start, string op) {
+		if (start == ip.length())
+			result.push_back(op);
+
+		if (isdigit(ip[start])) {
+			solve(ip, start+1, op + ip[start]);
+		} else {
+			solve(ip, start+1, op + (char)tolower(ip[start]));
+			solve(ip, start+1, op + (char)toupper(ip[start]));   
+		}
 	}
-	if (ip[start]>='0' and ip[start]<='9') {
-		op.push_back(ip[start]);
-		solve(ip, start+1, op);
-		return;
-	}
-	string op1 = op;
-	string op2 = op;
-	op1.push_back(ip[start]);
-	if (ip[start]>='a' && ip[start]<='z')	op2.push_back(ip[start]-32);
-	else op2.push_back(ip[start]+32);
-	solve(ip, start+1, op1);
-	solve(ip, start+1, op2);
-}
+
+};
 
 /* ******* bit manipulation (wrong) *********
 
