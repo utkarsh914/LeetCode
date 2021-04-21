@@ -69,10 +69,9 @@ int numIslands(vector<vector<char>>& grid) {
 			if (grid[i][j] != '1')
 				continue;
 			int p = find(ind(i,j));
-			if (freq[p]==0)
-				freq[p]++, count++;
-			else
-				freq[p]++;
+			if (freq[p] == 0)
+				count++;
+			freq[p]++;
 		}
 	}
 

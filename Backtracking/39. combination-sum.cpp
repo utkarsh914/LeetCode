@@ -24,29 +24,30 @@ public:
 	vector<int> currVec;
 	vector<vector<int>> result;
 
-	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+	vector<vector<int>> combinationSum(vector<int>& cand, int target) {
 		targetSum = target;
-		backtrack(candidates, 0);
+		backtrack(cand, 0);
 		return result;
 	}
 
-	void backtrack(vector<int>& candidates, int start) {
+	void backtrack(vector<int>& cand, int start) {
 		if (currSum == targetSum)
 			result.push_back(currVec);
-		for (int i=start; i<candidates.size(); i++) {
-			if (currSum + candidates[i] > targetSum)
+		for (int i=start; i<cand.size(); i++) {
+			if (currSum + cand[i] > targetSum)
 				continue;
 			int count = 0;
-			while (currSum + candidates[i] <= targetSum) {
+			// keep taking cur candidate as many times it can be taken
+			while (currSum + cand[i] <= targetSum) {
 				count++;
-				currSum += candidates[i];
-				currVec.push_back(candidates[i]);
+				currSum += cand[i];
+				currVec.push_back(cand[i]);
 				// backtrack on remaining part
-				backtrack(candidates, i+1);
+				backtrack(cand, i+1);
 			}
 			while (count--) {
 				// remove the ith element count times
-				currSum -= candidates[i];
+				currSum -= cand[i];
 				currVec.pop_back();
 			}
 		}
@@ -61,24 +62,25 @@ public:
 	vector<int> currVec;
 	vector<vector<int>> result;
 
-	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+	vector<vector<int>> combinationSum(vector<int>& cand, int target) {
 		targetSum = target;
-		backtrack(candidates, 0);
+		backtrack(cand, 0);
 		return result;
 	}
 
-	void backtrack(vector<int>& candidates, int start) {
+	void backtrack(vector<int>& cand, int start) {
 		if (currSum == targetSum)
 			result.push_back(currVec);
-		for (int i=start; i<candidates.size(); i++) {
-			if (currSum + candidates[i] > targetSum)
+		for (int i=start; i<cand.size(); i++) {
+			if (currSum + cand[i] > targetSum)
 				continue;
-			currSum += candidates[i];
-			currVec.push_back(candidates[i]);
+			// add current element to curr vector
+			currSum += cand[i];
+			currVec.push_back(cand[i]);
 			// backtrack on remaining part
-			backtrack(candidates, i+1);
+			backtrack(cand, i+1);
 			// remove the ith element
-			currSum -= candidates[i];
+			currSum -= cand[i];
 			currVec.pop_back();
 		}
 	}

@@ -26,25 +26,24 @@ public:
 	vector<vector<int>> combinationSum3(int k, int n) {
 		targetSum = n;
 		requiredCount = k;
-		vector<int> candidates;
-		for (int i=1; i<=9; i++)
-			candidates.push_back(i);
+		vector<int> candidates {1,2,3,4,5,6,7,8,9};
 		backtrack(candidates, 0);
 		return result;
 	}
 
-	void backtrack(vector<int>& candidates, int start) {
+	void backtrack(vector<int>& cand, int start) {
 		if (currSum==targetSum and currVec.size()==requiredCount)
 			result.push_back(currVec);
-		for (int i=start; i<candidates.size(); i++) {
-			if (currSum + candidates[i] > targetSum)
+
+		for (int i = start; i < cand.size(); i++) {
+			if (currSum + cand[i] > targetSum)
 				continue;
-			currSum += candidates[i];
-			currVec.push_back(candidates[i]);
+			currSum += cand[i];
+			currVec.push_back(cand[i]);
 			// backtrack on remaining part
-			backtrack(candidates, i+1);
+			backtrack(cand, i+1);
 			// remove the ith element
-			currSum -= candidates[i];
+			currSum -= cand[i];
 			currVec.pop_back();
 		}
 	}
