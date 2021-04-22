@@ -3,3 +3,57 @@ https://leetcode.com/discuss/general-discussion/786126/python-powerful-ultimate-
 https://leetcode.com/problems/binary-search/discuss/423162/Binary-Search-101-The-Ultimate-Binary-Search-Handbook
 
 https://leetcode.com/problems/find-k-th-smallest-pair-distance/discuss/109082/Approach-the-problem-using-the-%22trial-and-error%22-algorithm
+
+
+
+
+
+
+========= HOW TO COMPUTE MID =========
+
+1. ***** mid = lo + (hi - lo) / 2 *****
+
+It is biased towards left.
+i.e. if lo=1, hi=2, mid=1
+It should be used when our desired answer exists on the left side.
+i.e. we are minimizing our answer (in an increasing search space)
+
+bcz, when the condition satisfies, we do
+	lo = mid
+else
+	hi = mid-1
+
+
+
+2.  ****** mid = hi - (hi - lo) / 2 *****
+
+It is biased towards right.
+i.e. if lo=1, hi=2, mid=2
+It should be used when our desired answer exists on the right side.
+i.e. we are maximizing our answer (in an increasing search space)
+
+we can also use
+	mid = lo + (hi-lo)/2 + 1; --> same thing
+
+bcz, when the condition satisfies, we do
+	lo = mid
+else
+	hi = mid-1
+
+
+
+
+****** ALTERNATIVE EXPLANATION *******
+
+In case of searching first true followed by false.
+
+F F F T T T T
+_ _ _ * _ _ _
+we use mid = (low + high)/2
+
+In the same fashion, for finding last true.
+
+T T T T F F F 
+_ _ _ * _ _ _
+use mid = (low + high)/2 + 1 to avoid infinite loop.
+low == l, high == r
