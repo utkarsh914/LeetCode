@@ -21,8 +21,7 @@ public:
 		// go to the endmost of moved subtree (right presently)
 		// and place the copied right subtree there
 		TreeNode* it = r;
-		while (it->right)
-			it = it->right;
+		while (it->right)	it = it->right;
 		it->right = right;
 	}
 };

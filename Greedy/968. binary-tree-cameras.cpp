@@ -7,6 +7,12 @@ Calculate the minimum number of cameras needed to monitor all nodes of the tree.
 */
 
 
+
+
+
+
+
+
 /*
 Consider a node in the tree.
 It can be covered by its parent, itself, its two children.
@@ -28,9 +34,12 @@ Now we have only one option, set up camera to all leaves' parent.
 
 Here is our greedy solution:
 
-Set cameras on all leaves' parents, thenremove all covered nodes.
+Set cameras on all leaves' parents, then remove all covered nodes.
 Repeat step 1 until all nodes are covered.
+
+
 Explanation:
+
 Apply a recusion function dfs.
 Return 0 if it's a leaf.
 Return 1 if it's a parent of a leaf, with a camera on this node.
@@ -52,7 +61,7 @@ class Solution {
 public:
 	int minCameraCover(TreeNode* r) {
 		cam = 0;
-		if (dfs(root) == "leaf") cam++;
+		if (dfs(r) == "leaf") cam++;
 		return cam;
 	}
 	

@@ -22,6 +22,28 @@
  * };
  */
 
+
+
+class Solution {
+public:
+	TreeNode* sortedListToBST(ListNode* head, ListNode* last = NULL) {
+		if (!head or head==last) return NULL;
+		ListNode *slow = head, *fast = head;
+		while (fast && fast!=last && fast->next && fast->next!=last) {
+			slow = slow->next;
+			fast = fast->next->next;
+		}
+		TreeNode* ans = new TreeNode(slow->val);
+		ans->left = sortedListToBST(head, slow);
+		ans->right = sortedListToBST(slow->next, last);
+		return ans;
+	}
+};
+
+
+
+
+
 class Solution {
 	ListNode* getMid(ListNode* head) {
 		if (!head) return NULL;
