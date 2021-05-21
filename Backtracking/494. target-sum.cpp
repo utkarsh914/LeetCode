@@ -23,37 +23,109 @@ There are 5 ways to assign symbols to make the sum of nums be target 3.
 
 
 
+
+
+
+
+
+
+/*
+******* 0/1 Knapsack *******
+
+some numbers have to be given + sign, and some -
+let all no's having + sign sum up to A,
+and all no's having - sign sum up to B
+
+so, A + B = sum of array
+and A - B = target (S)
+
+which means, A = (sum + target) / 2;
+
+now, if sum + target is even, any combination is not possible,
+so return 0
+
+else, find the number of ways you can pick some items
+so that they sum up to A
+*/
 class Solution {
-	// A hash function used to hash a pair of any kind 
-	struct hash_pair { 
-		template <class T1, class T2> 
-		size_t operator()(const pair<T1, T2>& p) const { 
-			auto hash1 = hash<T1>{}(p.first); 
-			auto hash2 = hash<T2>{}(p.second); 
-			return hash1 ^ hash2; 
-		}
-	};
-	
-	unordered_map<pair<int,int>, int, hash_pair> dp;
-
 public:
-	int findTargetSumWays(vector<int>& nums, int S) {
-		if (S > 1000) return 0;
-		return dfs(nums, 0, S);
-	}
+	int findTargetSumWays(vector<int>& arr, int target) {
+		int sum = accumulate(arr.begin(), arr.end(), 0);
+		if ((sum + target) % 2 == 1) return 0;
+		int A = (sum + target) / 2;
 
-	int dfs(vector<int>& nums, int start, int S) {
-		if (start == nums.size()-1)
-			return (int)(nums[start] == S) + (int)(-nums[start] == S);
-		if (dp.count({start, S}))
-			return dp[{start, S}];
+		/*
+		we use 'size+1' rather than 'size', to make it easier to tackle the boundary.
+		dp[i][sum] means how many ways we choose from first i elements,
+		and not upto i index
+		*/
+		vector<vector<int>> dp(arr.size()+1, vector<int>(A+1, 0));
+		dp[0][0] = 1;
 
-		int ans = 0;
-		ans += dfs(nums, start+1, S-nums[start]); // take +
-		ans += dfs(nums, start+1, S+nums[start]); // take -
-		return dp[{start, S}] = ans;
+		for (int i = 1; i <= arr.size(); i++) {
+			for (int j = 0; j <= A; j++) {
+				dp[i][j] = dp[i-1][j]; // don't pick cur ele
+				if (arr[i-1] <= j) // 
+					dp[i][j] += dp[i-1][j - arr[i-1]];
+			}
+		}
+
+		return dp[arr.size()][A];
 	}
 };
+
+
+
+
+class Solution {
+public:
+	int findTargetSumWays(vector<int>& arr, int target) {
+		int sum = accumulate(arr.begin(), arr.end(), 0);
+		if ((sum + target) % 2 == 1) return 0;
+		int A = (sum + target) / 2;
+
+		vector<int> dp(A+1);
+		dp[0] = 1;
+
+		for (int i = 0; i < arr.size(); i++) {
+			for (int sum = A; sum >= arr[i]; sum--)
+				dp[sum] += dp[sum - arr[i]];
+		}
+
+		return dp[A];
+	}
+};
+
+
+
+
+
+
+
+
+
+// ******* better Backtracking + DP *******
+class Solution {
+	vector<unordered_map<int,int>> dp;
+public:
+	int findTargetSumWays(vector<int>& A, int S) {
+		dp.resize(A.size());
+		return dfs(A, 0, S);
+	}
+
+	int dfs(vector<int>& A, int start, int S) {
+		if (start >= A.size()) return int(S == 0);
+		if (dp[start].count(S)) return dp[start][S];
+
+		int minus = dfs(A, start+1, S + A[start]); // take -
+		int plus  = dfs(A, start+1, S - A[start]); // take +
+		return dp[start][S] = minus + plus;
+	}
+};
+
+
+
+
 
 
 
@@ -76,3 +148,4 @@ public:
 		dfs(nums, start+1, curVal-nums[start], S);
 	}
 };
+
