@@ -22,7 +22,7 @@ class Solution {
 public:
 	int change(int amount, vector<int>& coins) {
 		int dp[coins.size()+1][amount+1];
-		// 0 ways possible if now coins available
+		// 0 ways possible if no coins available
 		for (int i = 1; i <= amount; i++)
 			dp[0][i] = 0;
 		// to make 0, there is only 1 way(to not take any coin)
