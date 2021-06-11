@@ -20,19 +20,30 @@ Constraints:
 1 <= n <= 8
 */
 
+
+
+
+
+/*
+Instead of adding '(' or ')' every time as in Approach 1,
+let's only add them when we know it will remain a valid sequence.
+We can do this by keeping track of the number of opening and closing brackets we have placed so far.
+
+We can start an opening bracket if we still have one (of n) left to place.
+And we can start a closing bracket if it would not exceed the number of opening brackets.
+*/
 class Solution {
+	vector<string> ans;
 public:
 	vector<string> generateParenthesis(int n) {
-		vector<string> result;
-		helper(result, "", n, n);
-		return result;
+		generate("", 0, 0, n);
+		return ans;
 	}
-	void helper(vector<string>& result, string str, int left, int right) {
-		if (left==0 and right==0) {
-			result.push_back(str);
-			return;
-		}
-		if (left > 0) helper(result, str+"(", left-1, right);
-		if (right > left) helper(result, str+")", left, right-1);
+	
+	void generate(string s, int open, int close, int max) {
+		if (s.size() == 2 * max) ans.push_back(s);
+		
+		if (open < max) generate(s+"(", open+1, close, max);
+		if (close < open) generate(s+")", open, close+1, max);
 	}
 };
