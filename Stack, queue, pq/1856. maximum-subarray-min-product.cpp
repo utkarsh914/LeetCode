@@ -76,3 +76,54 @@ public:
 		return ans % 1000000007L;
 	}
 };
+
+
+
+
+
+
+
+
+
+
+/*
+same idea as above
+just change is that I directly store the index till which my subarray
+with A[i] as min element can be extended on right and left;
+so, subarray range is [left[i], right[i]] inclusive
+*/
+class Solution {
+public:
+	int maxSumMinProduct(vector<int>& A) {
+		long ans = 0, N = A.size();
+		vector<int> right(N, N-1), left(N, 0);
+		vector<long> presum(N);
+		presum[0] = A[0];
+		for (int i = 1; i < N; i++)
+			presum[i] = presum[i-1] + A[i];
+		
+		stack<int> s;
+		for (int i = N-1; i >= 0; i--) {
+			while (!s.empty() and A[s.top()] >= A[i])
+				s.pop();
+			if (!s.empty()) right[i] = s.top()-1;
+			s.push(i);
+		}
+		
+		s = stack<int> ();
+		for (int i = 0; i < N; i++) {
+			while (!s.empty() and A[s.top()] >= A[i])
+				s.pop();
+			if (!s.empty()) left[i] = s.top()+1;
+			s.push(i);
+		}
+		
+		for (int i = 0; i < N; i++) {
+			int l = left[i], r = right[i];
+			long sum = (presum[r] - presum[l] + A[l]) * long(A[i]);
+			ans = max(ans, sum);
+		}
+		
+		return ans % 1000000007L;
+	}
+};
