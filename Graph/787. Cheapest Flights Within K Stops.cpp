@@ -82,6 +82,115 @@ public:
 
 
 
+/*
+----- bottom up DP (basis of BELLMAN FORD, but BF is a bit different) ------
+if max allowed stops is k, it means max path length can be k+1
+
+dp[i][j] = cost to reach i with at most the path length of j
+*/
+class Solution {
+public:
+	int findCheapestPrice(int n, vector<vector<int>>& flights,
+			int src, int dst, int k) {
+		vector<vector<int>> dp(n+1, vector<int> (k+2, INT_MAX));
+		// base condition
+		for (int length = 0; length <= k + 1; length++)
+			dp[src][length] = 0;
+
+		for (int length = 1; length <= k + 1; length++) {
+			for (auto& f : flights) {
+				int u = f[0], v = f[1], cost = f[2];
+				if (dp[u][length-1] != INT_MAX)
+					dp[v][length] = min(dp[v][length], dp[u][length-1] + cost);
+			}
+		}
+
+		return dp[dst][k+1] == INT_MAX ? -1 : dp[dst][k+1];
+	}
+};
+
+
+
+
+
+/*
+----- bottom up DP (OPTIMIZED SPACE) ------
+if max allowed stops is k, it means max path length can be k+1
+
+dp[k][v] = cost to reach v with at most the path length of k
+
+it is optimized space DP.
+so we'll just store the previous state and current state
+*/
+class Solution {
+public:
+	int findCheapestPrice(int n, vector<vector<int>>& flights,
+			int src, int dst, int k) {
+		vector<vector<int>> dp(2, vector<int> (n+1, INT_MAX));
+		// base condition
+		dp[0][src] = dp[1][src] = 0;
+
+		for (int length = 1; length <= k + 1; length++) {
+			for (auto& f : flights) {
+				int u = f[0], v = f[1], cost = f[2];
+				int cur = length % 2, prev = !cur;
+				if (dp[prev][u] != INT_MAX)
+					dp[cur][v] = min(dp[cur][v], dp[prev][u] + cost);
+			}
+		}
+
+		return dp[(k+1)%2][dst] == INT_MAX ? -1 : dp[(k+1)%2][dst];
+	}
+};
+
+
+
+
+
+/*
+-------- using modified BELLMAN FORD (same as optimized DP above) ------------
+*/
+class Solution {
+public:
+	int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
+		vector<int> dist(n, INT_MAX);
+		dist[src] = 0;
+
+		for (int stops = 0; stops <= k; stops++) {
+			vector<int> temp = dist;
+			for (auto& f : flights) {
+				int u = f[0], v = f[1], cost = f[2];
+				if (dist[u] != INT_MAX)
+					temp[v] = min(temp[v], dist[u] + cost);
+			}
+			dist = temp;
+		}
+
+		return dist[dst] == INT_MAX ? -1 : dist[dst];
+	}
+};
+
+/*
+ basically the Bellman Ford algorithm,
+ keeps on updating the distance array while relaxing the edges
+ ( i.e it relax the next edge (u,v) based on updated distance(u) )...
+ so it hides the track of number of edges visited in between...
+ while here we hold the updated distance till we traverse all the edges
+ ..and then update the distance for the next iteration...
+
+ so in case when k==n-1 this algo will produce the output just like Bellman ford.
+*/
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 can't use Dijkstra here directly
@@ -94,6 +203,10 @@ if alt < dist[v]:
 Because there could be routes which their length is shorter but pass more stops, and those routes don't necessarily constitute the best route in the end. To deal with this, rather than maintain the optimal routes with 0..K stops for each node, the solution simply put all possible routes into the priority queue, so that all of them has a chance to be processed. IMO, this is the most brilliant part.
 And the solution simply returns the first qualified route, it's easy to prove this must be the best route.
 
+// above will give TLE. Need an optimization here as well.
+use an array to track the number of stops it took to reach a node,
+and then only visit the node again if the current path took
+fewer moves to reach the node than any previous path.
 */
 
 // gives TLE
@@ -101,20 +214,26 @@ typedef tuple<int,int,int> ti;
 class Solution {
 public:
 	int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K) {
-		vector<vector<pair<int,int>>>vp(n);
-		for(const auto&f:flights)   vp[f[0]].emplace_back(f[1],f[2]);
-		priority_queue<ti,vector<ti>,greater<ti>>pq;
-		pq.emplace(0,src,K+1);
-		while(!pq.empty()){
-			auto [cost,u,stops] = pq.top();
-			pq.pop();
-			if(u==dst)  return cost;
-			if(!stops)  continue;
-			for(auto to:vp[u]){
-				auto [v,w] = to;
-				pq.emplace(cost+w,v,stops-1);
+		// build graph
+		vector<vector<pair<int,int> > > G(n);
+		for (auto& f : flights)
+			G[f[0]].emplace_back(f[1], f[2]);
+
+		vector<int> stops_visited(n, -1);
+		priority_queue< ti, vector<ti>, greater<ti>> pq;
+		pq.emplace(0, src, K+1);
+
+		while (!pq.empty()) {
+			auto [ cost, u, stops] = pq.top(); pq.pop();
+			if (u == dst) return cost;
+			if (stops_visited[u] > stops) continue;
+			stops_visited[u] = stops;
+			if (stops == 0) continue;
+			for (auto [v, w] : G[u]) {
+				pq.emplace(cost + w, v, stops - 1);
 			}
 		}
+
 		return -1;
 	}
 };
