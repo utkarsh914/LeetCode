@@ -1,5 +1,41 @@
 // https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/
 
+/*
+You are given an integer array prices where prices[i]
+is the price of a given stock on the ith day, and an integer k.
+
+Find the maximum profit you can achieve.
+You may complete at most k transactions.
+
+Note: You may not engage in multiple transactions simultaneously
+(i.e., you must sell the stock before you buy again).
+
+ 
+
+Example 1:
+
+Input: k = 2, prices = [2,4,1]
+Output: 2
+Explanation: Buy on day 1 (price = 2) and sell on day 2 (price = 4),
+profit = 4-2 = 2.
+
+Example 2:
+
+Input: k = 2, prices = [3,2,6,5,0,3]
+Output: 7
+Explanation: Buy on day 2 (price = 2) and sell on day 3 (price = 6),
+profit = 6-2 = 4. Then buy on day 5 (price = 0) and sell on day 6 (price = 3),
+profit = 3-0 = 3.
+ 
+
+Constraints:
+
+0 <= k <= 100
+0 <= prices.length <= 1000
+0 <= prices[i] <= 1000
+*/
+
+
 
 
 
@@ -58,11 +94,7 @@ public:
 
 		for (int i=0; i <= size; i++) {
 			for (int k=0; k <= K; k++) {
-				if (i == 0) {
-					dp[i][k][0] = 0;
-					dp[i][k][1] = INT_MIN;
-				}
-				else if (k == 0) {
+				if (i == 0 or k == 0) {
 					dp[i][k][0] = 0;
 					dp[i][k][1] = INT_MIN;
 				}
@@ -85,39 +117,52 @@ public:
 
 
 
+// -------- more concise --------
+int maxProfit(int K, vector<int>& prices) {
+	int N = prices.size();
+	int hold[N+1][K+1], sell[N+1][K+1];
 
-
-// ********** O(K) space **********
-class Solution {
-public:
-	int maxProfit(int K, vector<int>& prices) {
-		int size = prices.size();
-		if (K >= size/2) return quickSolve(prices);
-
-		int dp[2][K+1][2];
-
-		for (int i=0; i <= size; i++) {
-			for (int k=0; k <= K; k++) {
-				if (i == 0 or k == 0) {
-					dp[i%2][k][0] = 0;
-					dp[i%2][k][1] = INT_MIN;
-				}
-				else {
-					dp[i%2][k][0] = max( dp[(i+1)%2][k][0], dp[(i+1)%2][k][1] + prices[i-1] );
-					dp[i%2][k][1] = max( dp[(i+1)%2][k][1], dp[(i+1)%2][k-1][0] - prices[i-1] );
-				}
+	for (int l = 0; l <= N; l++) {
+		for (int k = 0; k <= K; k++) {
+			if (l == 0 or k == 0) {
+				sell[l][k] = 0;
+				hold[l][k] = INT_MIN;
+			}
+			else {
+				sell[l][k] = max(sell[l-1][k], hold[l-1][k] + prices[l-1]);
+				hold[l][k] = max(hold[l-1][k], sell[l-1][k-1] - prices[l-1]);
 			}
 		}
-
-		return dp[size%2][K][0];
 	}
 
-	int quickSolve(vector<int>& prices, int result = 0) {
-		for (auto i = 1; i < prices.size(); ++i)
-			result += max(0, prices[i] - prices[i - 1]);
-		return result;
+	return sell[N][K];
+}
+
+
+
+
+// ********** O(K) space **********
+int maxProfit(int K, vector<int>& prices) {
+	int size = prices.size();
+
+	int dp[2][K+1][2];
+
+	for (int i=0; i <= size; i++) {
+		int cur = i % 2, prev = !cur;
+		for (int k=0; k <= K; k++) {
+			if (i == 0 or k == 0) {
+				dp[cur][k][0] = 0;
+				dp[cur][k][1] = INT_MIN;
+			}
+			else {
+				dp[cur][k][0] = max( dp[prev][k][0], dp[prev][k][1] + prices[i-1] );
+				dp[cur][k][1] = max( dp[prev][k][1], dp[prev][k-1][0] - prices[i-1] );
+			}
+		}
 	}
-};
+
+	return dp[size % 2][K][0];
+}
 
 
 
@@ -128,7 +173,6 @@ class Solution {
 public:
 	int maxProfit(int K, vector<int>& prices) {
 		int size = prices.size();
-		if (K >= size/2) return quickSolve(prices);
 
 		vector<int> dp_ik0(K+1, 0);
 		vector<int> dp_ik1(K+1, INT_MIN);
@@ -141,11 +185,5 @@ public:
 		}
 
 		return dp_ik0[K];
-	}
-
-	int quickSolve(vector<int>& prices, int result = 0) {
-		for (auto i = 1; i < prices.size(); ++i)
-			result += max(0, prices[i] - prices[i - 1]);
-		return result;
 	}
 };

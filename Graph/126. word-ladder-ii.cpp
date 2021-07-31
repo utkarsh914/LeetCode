@@ -142,5 +142,49 @@ public:
 
 
 
-
-
+// Backtracking - TLE
+class Solution {
+	string end;
+	int minPathSize;
+	unordered_map<string, bool> dict;
+	vector<vector<string>> ans;
+	vector<string> cur;
+	
+public:
+	vector<vector<string>> findLadders(string begin, string end, vector<string>& List) {
+		this->end = end;
+		this->minPathSize = INT_MAX;
+		for (auto& w : List) dict[w] = false;
+		cur.push_back(begin);
+		dict[begin] = true;
+		backtrack();
+		return ans;
+	}
+	
+	void backtrack() {
+		if (cur.back() == end) {
+			if (cur.size() < minPathSize)
+				minPathSize = cur.size(), ans.clear();
+			if (cur.size() == minPathSize)
+				ans.push_back(cur);
+			return;
+		}
+		string w = cur.back();
+		for (int i = 0; i < w.size(); i++) {
+			char origChar = w[i];
+			for (char c = 'a'; c <= 'z'; c++) {
+				if (c == origChar) continue;
+				w[i] = c;
+				auto itr = dict.find(w);
+				if (itr == dict.end() or itr->second)
+					continue;
+				itr->second = true;
+				cur.push_back(w);
+				backtrack();
+				cur.pop_back();
+				itr->second = false;
+			}
+			w[i] = origChar;
+		}
+	}
+};

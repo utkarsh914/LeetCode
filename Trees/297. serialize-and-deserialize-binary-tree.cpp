@@ -11,6 +11,78 @@
  */
 
 
+
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *	 int val;
+ *	 TreeNode *left;
+ *	 TreeNode *right;
+ *	 TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+	// Encodes a tree to a single string
+	// (level order traversal with every elment separated by space).
+	string serialize(TreeNode* root) {
+		string s;
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int size = q.size();
+			while (size--) {
+				auto cur = q.front(); q.pop();
+				s += cur ? (to_string(cur->val) + " ") : "N ";
+				if (cur == NULL) continue;
+				q.push(cur->left);
+				q.push(cur->right);
+			}
+		}
+		return s;
+	}
+
+	// Decodes your encoded data to tree.
+	TreeNode* deserialize(string data) {
+		stringstream ss(data);
+		string w; ss >> w;
+		if (w == "N") return NULL;
+		TreeNode* root = new TreeNode(stoi(w));
+		queue<TreeNode*> q;
+		q.push(root);
+		while (!q.empty()) {
+			int size = q.size();
+			while (size--) {
+				auto parent = q.front(); q.pop();
+				ss >> w;
+				if (w != "N") {
+					parent->left = new TreeNode(stoi(w));
+					q.push(parent->left);
+				}
+				ss >> w;
+				if (w != "N") {
+					parent->right = new TreeNode(stoi(w));
+					q.push(parent->right);
+				}
+			}
+		}
+		return root;
+	}
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec ser, deser;
+// TreeNode* ans = deser.deserialize(ser.serialize(root));
+
+
+
+
+
+
+
+
+
 // **************** MUCH CLEANER APPROACH (Like leetCode's) ***************
 class Codec {
 public:
