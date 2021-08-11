@@ -6,9 +6,17 @@ Design and implement a data structure for Least Frequently Used (LFU) cache.
 Implement the LFUCache class:
 
 LFUCache(int capacity) Initializes the object with the capacity of the data structure.
-int get(int key) Gets the value of the key if the key exists in the cache. Otherwise, returns -1.
-void put(int key, int value) Sets or inserts the value if the key is not already present. When the cache reaches its capacity, it should invalidate the least frequently used item before inserting a new item. For this problem, when there is a tie (i.e., two or more keys with the same frequency), the least recently used key would be evicted.
-Notice that the number of times an item is used is the number of calls to the get and put functions for that item since it was inserted. This number is set to zero when the item is removed.
+int get(int key) Gets the value of the key if the key exists in the cache.
+Otherwise, returns -1.
+void put(int key, int value) Sets or inserts the value if the key is not already present.
+When the cache reaches its capacity,
+it should invalidate the least frequently used item before inserting a new item.
+For this problem, when there is a tie
+(i.e., two or more keys with the same frequency),
+the least recently used key would be evicted.
+Notice that the number of times an item is used is
+the number of calls to the get and put functions for that item since it was inserted.
+This number is set to zero when the item is removed.
 
  
 
@@ -42,12 +50,11 @@ class LFUCache {
 	
 public:
 	
-	LFUCache(int capacity) {
-		Cap=capacity, minFreq=1;
-	}
+	LFUCache(int capacity) : Cap(capacity), minFreq(1) {}
 	
 	void put(int key, int value) {
 		if (Cap == 0) return;
+
 		if (itrMap.count(key)) {
 			int f = keyInfo[key].second;
 			// delete from freq list
@@ -56,12 +63,13 @@ public:
 			freqMap[f+1].push_front(key);
 			// update maps
 			itrMap[key] = freqMap[f+1].begin();
-			keyInfo[key] = {value, f+1};
+			keyInfo[key] = { value, f+1 };
 			// update min freq
 			if (freqMap[minFreq].size() == 0) minFreq = f+1;
 			minFreq = min (minFreq, f+1);
 			return;
 		}
+
 		if (itrMap.size() == Cap) {
 			// pop_back at minFreq list;
 			int tempKey = freqMap[minFreq].back();
@@ -78,8 +86,7 @@ public:
 	}
 	
 	int get(int key) {
-		if (Cap==0 or !itrMap.count(key))
-			return -1;
+		if (Cap == 0 or !itrMap.count(key)) return -1;
 		
 		int f = keyInfo[key].second;
 		// delete from freq list

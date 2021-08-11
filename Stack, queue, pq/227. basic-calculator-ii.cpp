@@ -1,12 +1,48 @@
 // https://leetcode.com/problems/basic-calculator-ii/
 
+/*
+Given a string s which represents an expression, evaluate this expression and return its value. 
+
+The integer division should truncate toward zero.
+
+Note: You are not allowed to use any built-in function which evaluates strings as mathematical expressions, such as eval().
+
+ 
+
+Example 1:
+
+Input: s = "3+2*2"
+Output: 7
+Example 2:
+
+Input: s = " 3/2 "
+Output: 1
+Example 3:
+
+Input: s = " 3+5 / 2 "
+Output: 5
+ 
+
+Constraints:
+
+1 <= s.length <= 3 * 105
+s consists of integers and operators ('+', '-', '*', '/') separated by some number of spaces.
+s represents a valid expression.
+All the integers in the expression are non-negative integers in the range [0, 231 - 1].
+The answer is guaranteed to fit in a 32-bit integer.
+*/
+
+
+
+
+
 
 int calculate(string& s) {
 	stringstream ss("+" + s);
 	char op;
 	int n, last, ans = 0;
 	while (ss >> op >> n) {
-		if (op == '+' || op == '-') {
+		if (op == '+' or op == '-') {
 			n = op == '+' ? n : -n;
 			ans += n;
 		} else {
@@ -34,6 +70,57 @@ int calculate(string& s) {
 				preOp, num = s[i], 0
 		return sum(stack)
 */
+
+
+
+
+class Solution {
+public:
+	int calculate(string s) {
+		int sz = s.size();
+		int val = 0; char sym = '+';
+		s += '+';
+
+		for (int i = 0; i < sz; ) {
+			// skip spaces
+			while (i < sz and isspace(s[i])) i++;
+
+			int n = 0;
+			while (i < sz and isdigit(s[i]))
+				n = n * 10 + (s[i++] - '0');
+			
+			// skip spaces again
+			while (i < sz and isspace(s[i])) i++;
+			
+			// deal with '/' and '*'
+			while (i < sz and (s[i] == '*' or s[i] == '/')) {
+				char curSym = s[i++];
+				// skip spaces again
+				while (i < sz and isspace(s[i])) i++;
+				int curN = 0;
+				while (i < sz and isdigit(s[i]))
+					curN = curN * 10 + (s[i++] - '0');
+				if (curSym == '/') n /= curN;
+				else n *= curN;
+			}
+			// skip spaces
+			while (i < sz and isspace(s[i])) i++;
+
+			if (sym == '+') val += n;
+			else if (sym == '-') val -= n;
+			sym = s[i++];
+		}
+
+		return val;
+	}
+};
+
+
+
+
+
+
+
 
 
 class Solution {

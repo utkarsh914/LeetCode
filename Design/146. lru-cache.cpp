@@ -48,17 +48,14 @@ private:
 	list<pair<int,int>> q;
 	unordered_map<int, list<pair<int,int>>::iterator> mp;
 public:
-	LRUCache(int capacity) {
-		C = capacity;
-	}
+	LRUCache(int capacity) : C(capacity) {}
 	
 	int get(int key) {
-		if (!mp.count(key))
-			return -1;
+		if (!mp.count(key)) return -1;
 		// if exists, delete it from its position and
 		// place in the front(latest accessed)
-		auto it=mp[key];
-		q.push_front({key,it->second});
+		auto it = mp[key];
+		q.push_front({ key, it->second});
 		mp[key] = q.begin();
 		q.erase(it);
 		return q.front().second;
@@ -68,18 +65,18 @@ public:
 		if (mp.count(key)) {
 			// if exists, delete it from its position and
 			// place in the front(latest accessed)
-			auto it=mp[key];
-			q.push_front({key,value});
+			auto it = mp[key];
+			q.push_front({ key, value });
 			q.erase(it);
 			mp[key] = q.begin();
 		}
 		else {
-			if (q.size()==C) {
+			if (q.size() == C) {
 				// delete from map and queue
 				mp.erase(q.back().first);
 				q.pop_back();
 			}
-			q.push_front({key,value});
+			q.push_front({ key, value});
 			mp[key] = q.begin();
 		}
 	}

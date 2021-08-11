@@ -20,7 +20,7 @@ int calculate(string s) {
 		if (c >= '0') {
 			int number = 0;
 			while (i < s.size()  &&  s[i] >= '0')
-				number = 10 * number + s[i++] - '0';
+				number = 10 * number + (s[i++] - '0');
 			total += signs.back() * number;
 			signs.pop_back();
 			i--;
@@ -118,9 +118,8 @@ public:
 		// convert to postfix
 		for (int i=0; i < str.size(); ) {
 			char c = str[i++];
-			if (c == ' ') {
-				continue;
-			}
+			if (isspace(c)) continue;
+
 			if (isdigit(c)) {
 				string n(1, c);
 				while (i < str.size() && isdigit(str[i]))
@@ -139,7 +138,7 @@ public:
 					post.push_back(n);
 				}
 			}
-			else if (c == '+' || c == '-') {
+			else if (c == '+' or c == '-') {
 				while (!s.empty() && s.top() == "-") {
 					post.push_back(s.top());
 					s.pop();
@@ -171,9 +170,10 @@ public:
 				int x = 0, y = 0;
 				if (!s.empty()) x = s.top(), s.pop();
 				if (!s.empty()) y = s.top(), s.pop();
-				int z = p=="+" ? y+x : y-x;
+				int z = p == "+" ? y+x : y-x;
 				s.push(z);
-			} else {
+			}
+			else {
 				s.push(stoi(p));
 			}
 		}
