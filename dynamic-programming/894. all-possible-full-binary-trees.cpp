@@ -25,8 +25,8 @@ public:
 		for (int i=1, j=N-2; i<=N-2 && j>=1; i+=2, j-=2) {
 			auto leftAns = allPossibleFBT(i);
 			auto rightAns = allPossibleFBT(j);
-			for (auto& left:leftAns) {
-				for (auto& right:rightAns) {
+			for (auto& left : leftAns) {
+				for (auto& right : rightAns) {
 					ans.push_back(new TreeNode(0, left, right));
 				}
 			}

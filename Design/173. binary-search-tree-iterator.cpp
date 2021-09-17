@@ -12,7 +12,7 @@
  * };
  */
 class BSTIterator {
-	int curr=0;
+	int curr = 0;
 	vector<int> arr;
 
 public:

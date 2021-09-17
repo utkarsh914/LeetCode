@@ -7,7 +7,9 @@ Implement the LRUCache class:
 
 LRUCache(int capacity) Initialize the LRU cache with positive size capacity.
 int get(int key) Return the value of the key if the key exists, otherwise return -1.
-void put(int key, int value) Update the value of the key if the key exists. Otherwise, add the key-value pair to the cache. If the number of keys exceeds the capacity from this operation, evict the least recently used key.
+void put(int key, int value) Update the value of the key if the key exists.
+Otherwise, add the key-value pair to the cache.
+If the number of keys exceeds the capacity from this operation, evict the least recently used key.
 Follow up:
 Could you do get and put in O(1) time complexity?
 
@@ -47,6 +49,7 @@ private:
 	int C;
 	list<pair<int,int>> q;
 	unordered_map<int, list<pair<int,int>>::iterator> mp;
+
 public:
 	LRUCache(int capacity) : C(capacity) {}
 	
@@ -66,8 +69,8 @@ public:
 			// if exists, delete it from its position and
 			// place in the front(latest accessed)
 			auto it = mp[key];
-			q.push_front({ key, value });
 			q.erase(it);
+			q.push_front({ key, value });
 			mp[key] = q.begin();
 		}
 		else {

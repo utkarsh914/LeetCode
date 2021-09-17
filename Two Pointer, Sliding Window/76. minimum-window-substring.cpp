@@ -12,6 +12,53 @@ Output: "BANC"
 */
 
 
+
+
+
+
+
+
+
+class Solution {
+public:
+	string minWindow(string& s, string& t) {
+		
+		int countS[128] = {}, countT[128] = {};
+		for (char c : t) countT[c]++;
+		
+		int startInd = -1, size = INT_MAX;
+		int found = 0, toFind = t.size();
+		
+		for (int l = 0, r = 0; r < s.size(); r++) {
+			// add cur char to window
+			if (++countS[s[r]] == countT[s[r]])
+				found += countT[s[r]];
+			
+			// shrink the window if substring is found in it
+			while (found == toFind) {
+				// update min window size
+				int curSize = r - l + 1;
+				if (curSize < size) {
+					startInd = l, size = curSize;
+				}
+				// remove one char from front
+				if (--countS[s[l]] < countT[s[l]])
+					found -= countT[s[l]];
+				l++;
+			}
+		}
+		
+		return startInd > -1 ? s.substr(startInd, size) : "";
+	}
+};
+
+
+
+
+
+
+
+
 class Solution {
 public:
 	string minWindow(string& s, string& t) {
@@ -75,7 +122,7 @@ string minWindow(string s, string t) {
 		if (counter != 0) {
 			char c = s[end++];
 			if (m[c] > 0)	counter--; // If char in s exists in t, decrease counter
-			m[c]--;                  // Decrease m[s[end]]. If char does not exist in t, m[s[end]] will be negative.
+			m[c]--;				  // Decrease m[s[end]]. If char does not exist in t, m[s[end]] will be negative.
 		}
 
 		// When we found a valid window, move start to find smaller window.
@@ -86,7 +133,7 @@ string minWindow(string s, string t) {
 			}
 			char c = s[start++];
 			if (m[c] > 0)	counter++; // When char exists in t, increase counter.
-			m[c]++;                  // as we've removed starting char, increase ts freq in map
+			m[c]++;				  // as we've removed starting char, increase ts freq in map
 		}
 	}
 	

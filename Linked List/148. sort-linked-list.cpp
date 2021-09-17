@@ -55,3 +55,93 @@ ListNode* Solution::mergeList(ListNode* h1, ListNode* h2) {
 	// return merged list
 	return head;
 }
+
+
+
+
+
+
+
+class Solution {
+	inline ListNode* getMid(ListNode* head) {
+		if (!head) return NULL;
+		auto slow = head, fast = head->next;
+		while (fast and fast->next) {
+			slow = slow->next;
+			fast = fast->next->next;
+		}
+		return slow;
+	}
+	
+public:
+	ListNode* sortList(ListNode* head) {
+		if (!head or !head->next) return head;
+		auto mid = getMid(head);
+		auto A = head, B = mid->next;
+		mid->next = NULL;
+		A = sortList(A);
+		B = sortList(B);
+		return merge(A, B);
+	}
+	
+	ListNode* merge(ListNode* A, ListNode* B) {
+		if (!A) return B;
+		if (!B) return A;
+
+		if (A->val < B->val) {
+			A->next = merge(A->next, B);
+			return A;
+		} else {
+			B->next = merge(B->next, A);
+			return B;
+		}
+	}
+};
+
+
+
+
+
+class Solution {
+	inline ListNode* getMid(ListNode* head) {
+		if (!head) return NULL;
+		auto slow = head, fast = head->next;
+		while (fast and fast->next) {
+			slow = slow->next;
+			fast = fast->next->next;
+		}
+		return slow;
+	}
+	
+public:
+	ListNode* sortList(ListNode* head) {
+		if (!head or !head->next) return head;
+		auto mid = getMid(head);
+		auto A = head, B = mid->next;
+		mid->next = NULL;
+		A = sortList(A);
+		B = sortList(B);
+		return merge(A, B);
+	}
+	
+	ListNode* merge(ListNode* A, ListNode* B) {
+		auto dummy = new ListNode(0);
+		auto it = dummy;
+
+		while (A and B) {
+			if (A->val < B->val) {
+				it->next = A;
+				A = A->next;
+			} else {
+				it->next = B;
+				B = B->next;
+			}
+			it = it->next;
+		}
+
+		if (A) it->next = A;
+		if (B) it->next = B;
+
+		return dummy->next;
+	}
+};

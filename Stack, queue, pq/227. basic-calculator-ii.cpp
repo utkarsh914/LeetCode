@@ -76,36 +76,25 @@ int calculate(string& s) {
 
 class Solution {
 public:
-	int calculate(string s) {
-		int sz = s.size();
+	int calculate(string& s) {
+
+		int size = s.size();
 		int val = 0; char sym = '+';
 		s += '+';
 
-		for (int i = 0; i < sz; ) {
-			// skip spaces
-			while (i < sz and isspace(s[i])) i++;
-
-			int n = 0;
-			while (i < sz and isdigit(s[i]))
-				n = n * 10 + (s[i++] - '0');
-			
-			// skip spaces again
-			while (i < sz and isspace(s[i])) i++;
-			
+		for (int i = 0; i < size; ) {
+			skipSpaces(s, i); // skip spaces
+			int n = extractNumber(s, i);
+			skipSpaces(s, i); // skip spaces
 			// deal with '/' and '*'
-			while (i < sz and (s[i] == '*' or s[i] == '/')) {
+			while (i < size and (s[i] == '*' or s[i] == '/')) {
 				char curSym = s[i++];
-				// skip spaces again
-				while (i < sz and isspace(s[i])) i++;
-				int curN = 0;
-				while (i < sz and isdigit(s[i]))
-					curN = curN * 10 + (s[i++] - '0');
+				skipSpaces(s, i); // skip spaces
+				int curN = extractNumber(s, i);
 				if (curSym == '/') n /= curN;
 				else n *= curN;
 			}
-			// skip spaces
-			while (i < sz and isspace(s[i])) i++;
-
+			skipSpaces(s, i); // skip spaces
 			if (sym == '+') val += n;
 			else if (sym == '-') val -= n;
 			sym = s[i++];
@@ -113,8 +102,18 @@ public:
 
 		return val;
 	}
+	
+	inline void skipSpaces(string& s, int& i) {
+		while (i < s.size() and isspace(s[i])) i++;
+	}
+	
+	inline int extractNumber(string& s, int& i) {
+		int n = 0;
+		while (i < s.size() and isdigit(s[i]))
+			n = n * 10 + (s[i++] - '0');
+		return n;
+	}
 };
-
 
 
 
@@ -128,6 +127,7 @@ public:
 	int calculate(string s) {
 		vector<string> stk;
 		string prev;
+		
 		for (int i=0; i<s.length(); i++) {
 			if (s[i]==' ')
 				continue;
